@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import time
 import random
+import subprocess
 
 
 #Création du fichier CSV si il n'existe pas.
@@ -15,13 +16,28 @@ with open("NEPASOUVRIR-listedemots.txt", "r") as file:
 
 new_words = {}
 
-root = tk.Tk()
-# Création du Frame
-frame = tk.Frame(root, bg = "#f0f0f0", width = 1000, height = 750)	
-frame.grid(row = 0, column = 0, padx = 0, pady = 0)
-# Création des zones de texte
-text = []
+def enter_words_window():
+	root1.destroy()
+	global root
+	global frame
+	
+	root = tk.Tk()
+	frame = tk.Frame(root, bg = "#f0f0f0", width = 1000, height = 750)	
+	frame.grid(row = 0, column = 0, padx = 0, pady = 0)
 
+	# Création des zones de texte
+	global text
+	text = []
+	add_button = tk.Button(frame, text = "Ajouter", bg = "#B0C4DE", command = ajouter, font=("Arial", 24))
+	new_line_button = tk.Button(frame, text = "Nouvelle ligne", command = nv_ligne, bg = "#B0C4DE", font=("Arial", 24))
+	add_button.grid(row = 0, column = 0, padx = 10, pady = 10)
+	new_line_button.grid(row = 0, column = 1, padx = 10, pady = 10)
+	
+	root.protocol("WM_DELETE_WINDOW", on_closing)
+
+	nv_ligne()
+	root.mainloop()	
+	
 
 def nv_ligne():
 	text1_elmt = tk.Entry(frame, font=("arial", 20))
@@ -63,13 +79,22 @@ def ajouter():
 		found_words = len(new_words) + len(old_words)
 		messagebox.showinfo("Bravo !", "Les mots on bien étés ajoutés à la liste.\n Vous avez trouvé " + str(found_words) + " mots sur 69163, soit " + format(found_words / 69163 * 100, '.3f') + "% des mots")
 
+
+def maj():
+	subprocess.call(["git", "pull", "origin", "main"])
+
 # Création des boutons avec la couleur de base
+root1 = tk.Tk()
 def early_window():
-	add_button = tk.Button(frame, text = "Ajouter", bg = "#B0C4DE", command = ajouter, font=("Arial", 24))
-	new_line_button = tk.Button(frame, text = "Nouvelle ligne", command = nv_ligne, bg = "#B0C4DE", font=("Arial", 24))
-	add_button.grid(row = 0, column = 0, padx = 10, pady = 10)
-	new_line_button.grid(row = 0, column = 1, padx = 10, pady = 10)
-	nv_ligne()
+	frame1 = tk.Frame(root1, bg = "#f0f0f0", width = 1000, height = 750)	
+	frame1.grid(row = 0, column = 0, padx = 0, pady = 0)
+
+	add_button = tk.Button(frame1, text = "Mettre l'application à jour", bg = "#B0C4DE", command = maj, font=("Arial", 24))
+	launch_words = tk.Button(frame1, text = "Rentrer des mots", bg = "#B0C4DE", command = enter_words_window, font=("Arial", 24))
+
+	add_button.grid(row = 1, column = 0, padx = 10, pady = 10)
+	launch_words.grid(row = 1, column = 1, padx = 10, pady = 10)
+
 
 def on_closing():
 	if messagebox.askokcancel("Quit", "Vous voulez quitter?"):
@@ -77,7 +102,6 @@ def on_closing():
 		for cle,value in new_words.items():
 			file1.write(cle + ';' + value + '\n')
 
-root.protocol("WM_DELETE_WINDOW", on_closing)
 
 early_window()
-root.mainloop()	   
+root1.mainloop()
