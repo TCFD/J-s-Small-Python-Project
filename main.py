@@ -11,7 +11,7 @@ file1.seek(0)
 old_words = set(line.split(";")[0] for line in file1)  # Prend juste le mot, pas la définition
 
 #Stockages du dico dans une liste
-with open("NEPASOUVRIR-listedemots.txt", "r") as file:
+with open("NEPASOUVRIR-listedemots.txt", "r", encoding='utf-8') as file:
     dico = set(file.read().splitlines())
 
 new_words = {}
